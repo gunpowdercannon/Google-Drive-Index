@@ -32,6 +32,26 @@ function init() {
     $('body').html(html);
 }
 
+function downloadStrm(name, data) {
+  let type = "data:attachment/text";
+  if (data != null && navigator.msSaveBlob) {
+    return navigator.msSaveBlob(new Blob([data], {
+      type: type
+    }), name);
+  }
+
+  var a = $("<a style='display: none;'/>");
+  var url = window.URL.createObjectURL(new Blob([data], {
+    type: type
+  }));
+  a.attr("href", url);
+  a.attr("download", name);
+  $("body").append(a);
+  a[0].click();
+  window.URL.revokeObjectURL(url);
+  a.remove();
+}
+
 const Os = {
     isWindows: navigator.platform.toUpperCase().indexOf('WIN') > -1, // .includes
     isMac: navigator.platform.toUpperCase().indexOf('MAC') > -1,
@@ -960,6 +980,7 @@ ${UI.display_drive_link ? '<a type="button" class="btn btn-info" href="https://d
       <span class="sr-only"></span>
     </button>
     <div class="dropdown-menu">
+      <a class="dropdown-item" href="javascript://" onclick="downloadStrm(`${caption}.strm`, url)">STRM</a>
       <a class="dropdown-item" href="iina://weblink?url=${url}">IINA</a>
       <a class="dropdown-item" href="potplayer://${url}">PotPlayer</a>
       <a class="dropdown-item" href="vlc://${url}">VLC</a>
